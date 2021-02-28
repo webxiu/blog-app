@@ -1,19 +1,20 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Head from 'next/head'
 import { Row, Col, Affix, Breadcrumb } from 'antd'
-import axios from 'axios'
 import Header from '../components/Header'
 import Author from '../components/Author'
 import Advert from '../components/Advert'
 import Footer from '../components/Footer'
-import ReactMarkdown from 'react-markdown'
-import MarkNav from 'markdown-navbar';
+// import ReactMarkdown from 'react-markdown'
+// import MarkNav from 'markdown-navbar';
 import 'markdown-navbar/dist/navbar.css';
+import { articleDetail } from './api/index'
+import { withRouter } from 'next/router'
+
 
 import marked from 'marked'
 import hljs from "highlight.js";
-// import Tocify from '../components/tocify.tsx'
-// import  servicePath  from '../config/apiUrl'
+import Tocify from '../components/tocify.tsx'
 import 'highlight.js/styles/monokai-sublime.css';
 import '../styles/pages/detailed.css'
 import {
@@ -25,13 +26,12 @@ import {
 
 
 
-const Detailed = (props) => {
-  // const tocify = new Tocify()
+const Detailed = ({ router }) => {
+  const tocify = new Tocify()
   const renderer = new marked.Renderer();
 
   renderer.heading = function (text, level, raw) {
-    // const anchor = tocify.add(text, level);
-    const anchor = 'aa';
+    const anchor = tocify.add(text, level);
     return `<a id="${anchor}" href="#${anchor}" class="anchor-fix"><h${level}>${text}</h${level}></a>\n`;
   };
 
@@ -48,8 +48,8 @@ const Detailed = (props) => {
       return hljs.highlightAuto(code).value;
     }
   });
-  // let html = marked(props.article_content)
-  let html = '# P01:课程介绍和环境搭建\n' +
+
+  let htmlText = '# p01:来个Hello World 初始Vue3.0\n' +
     '[ **M** ] arkdown + E [ **ditor** ] = **Mditor**  \n' +
     '> Mditor 是一个简洁、易于集成、方便扩展、期望舒服的编写 markdown 的编辑器，仅此而已... \n\n' +
     '**这是加粗的文字**\n\n' +
@@ -70,7 +70,7 @@ const Detailed = (props) => {
     '> aaaaaaaaa\n' +
     '>> bbbbbbbbb\n' +
     '>>> cccccccccc\n\n' +
-    '#5 p05:Vue3.0基础知识讲解\n' +
+    '# p05:Vue3.0基础知识讲解\n' +
     '> aaaaaaaaa\n' +
     '>> bbbbbbbbb\n' +
     '>>> cccccccccc\n\n' +
@@ -83,8 +83,24 @@ const Detailed = (props) => {
     '>> bbbbbbbbb\n' +
     '>>> cccccccccc\n\n' +
     '``` var a=11; ```'
+  let html = marked(htmlText)
 
 
+  useEffect(() => {
+    const id = router.query.id
+    if (id) {
+      getArticleDetail(id);
+    }
+  }, [router.query.id]);
+
+  const getArticleDetail = (id) => {
+    articleDetail(id).then((res) => {
+      // setDetail(res.data.data);
+      console.log('详情数据', res.data)
+    }).catch(err => {
+      console.log('err', err)
+    })
+  };
   return (
     <>
       <Head>
@@ -109,13 +125,13 @@ const Detailed = (props) => {
                 <span><FolderOutlined /> 视频教程</span>
                 <span><FireOutlined /> 5498人</span>
               </div>
-              {/* <div className="detailed-content" dangerouslySetInnerHTML={{ __html: html }}></div> */}
-              <div className="detailed-content" >
+              <div className="detailed-content" dangerouslySetInnerHTML={{ __html: html }}></div>
+              {/* <div className="detailed-content" >
                 <ReactMarkdown
-                  source={html}
+                  source={htmlText}
                   escapeHtml={false}
                 />
-              </div>
+              </div> */}
             </div>
           </div>
         </Col>
@@ -127,19 +143,17 @@ const Detailed = (props) => {
           <Advert />
           {/* 目录 */}
           <Affix offsetTop={5}>
-            {/* <div className="detailed-nav comm-box">
-              <div className="nav-title">文章目录</div>
-              <div className="toc-list">
-                {tocify && tocify.render()}
-              </div>
-            </div> */}
+
             <div className="detailed-nav comm-box">
               <div className="nav-title">文章目录</div>
-              <MarkNav
+              {/* <MarkNav
                 className="article-menu"
                 source={html}
                 ordered={false}
-              />
+              /> */}
+              <div className="toc-list">
+                {tocify && tocify.render()}
+              </div>
             </div>
           </Affix>
         </Col>
@@ -163,4 +177,4 @@ const Detailed = (props) => {
 //   return await promise
 // }
 
-export default Detailed
+export default withRouter(Detailed);

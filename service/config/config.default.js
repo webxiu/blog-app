@@ -23,6 +23,37 @@ module.exports = appInfo => {
     // myAppName: 'egg',
   };
 
+  config.mysql = {
+    client: {
+      host: 'localhost',
+      port: '3306',
+      user: 'root',
+      password: '123456',
+      database: 'blog',
+    },
+    // default configuration for all databases
+    default: {
+
+    },
+    // load into app, default is open
+    app: true,
+    // load into agent, default is close
+    agent: false,
+  };
+
+  config.security = {
+    csrf: { enable: false },
+    domainWhiteList: ['http://admin.yuming.cn', 'http://blog.yuming.cn']
+  };
+
+  config.cors = {
+    // origin: 'http://127.0.0.1:3000',
+    origin: '*',
+    credentials: true,  //允许Cook可以跨域
+    allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH,OPTIONS'
+  };
+
+
   return {
     ...config,
     ...userConfig,
