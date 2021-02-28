@@ -3,11 +3,6 @@
 const Controller = require('egg').Controller;
 
 class HomeController extends Controller {
-    async index() {
-        const { ctx, app } = this;
-        const result = await app.mysql.get('article', {})
-        ctx.body = result;
-    }
     /** 获取文章列表 */
     async getArticleList() {
         const { ctx, app } = this;
@@ -48,7 +43,7 @@ class HomeController extends Controller {
             msg: 'ok'
         };
     }
-    /** 获取分类 */
+    /** 获取分类类型 */
     async getTypeList() {
         const { ctx, app } = this;
         const data = await app.mysql.select('type') // type: 数据表

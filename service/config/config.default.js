@@ -43,13 +43,14 @@ module.exports = appInfo => {
 
   config.security = {
     csrf: { enable: false },
-    domainWhiteList: ['http://admin.yuming.cn', 'http://blog.yuming.cn']
+    // domainWhiteList: ['http://admin.yuming.cn', 'http://blog.yuming.cn']
+    domainWhiteList: ['*']
   };
 
   config.cors = {
-    // origin: 'http://127.0.0.1:3000',
-    origin: '*',
-    credentials: true,  //允许Cook可以跨域
+    // origin: '*', // 前端请求开启withCredentials:true, 不能使用通配符*
+    // origin: 'http://127.0.0.1:3000', // 只允许这个域进行访问接口
+    credentials: true, // 开启认证  允许cook跨域
     allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH,OPTIONS'
   };
 
