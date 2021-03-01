@@ -37,6 +37,51 @@ class AdminController extends Controller {
             msg: 'ok'
         };
     }
+    /** 获取文章列表 */
+    async getArticleList() {
+        const { ctx, app } = this;
+        const sql = `SELECT article.id as id, 
+                    article.title as title, 
+                    article.introduce as introduce,
+                    FROM_UNIXTIME(article.create_time, '%Y-%m-%d %H:%i:%s') as create_time,
+                    article.count as count,
+                    type.name as type
+                    FROM article LEFT JOIN type on article.type_id = type.id 
+                    ORDER BY article.id DESC`
+        const data = await app.mysql.query(sql)
+        ctx.body = {
+            data,
+            status: 0,
+            msg: 'ok'
+        };
+    }
+
+    /** 添加文章 */
+    async addArticle() {
+        const { ctx, app } = this;
+        const articleInfo = ctx.request.body
+        const { insertId, affectedRows } = await app.mysql.insert('article', articleInfo) // type: 数据表
+        ctx.body = {
+            data: {
+                insertId,
+                isScuccess: affectedRows === 1
+            },
+            status: 0,
+            msg: 'ok'
+        };
+    }
+
+    /** 修改文章 */
+    async updateArticle() {
+        const { ctx, app } = this;
+        const articleInfo = ctx.request.body
+        const { affectedRows } = await app.mysql.update('article', articleInfo) // type: 数据表
+        ctx.body = {
+            data: null,
+            status: 0,
+            msg: affectedRows === 1 ? '修改成功' : '修改失败',
+        };
+    }
 }
 
 module.exports = AdminController;
