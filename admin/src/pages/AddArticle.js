@@ -2,8 +2,8 @@ import '../static/css/AddArticle.css'
 
 import { Button, Col, DatePicker, Input, Row, Select, message } from 'antd'
 import React, { useEffect, useState } from 'react'
+import { addArticle, articleTypeList, updateArticle } from '../api/admin'
 
-import { articleTypeList } from '../api/admin'
 import axios from 'axios'
 import marked from 'marked'
 import servicePath from '../config/apiUrl'
@@ -19,9 +19,9 @@ function AddArticle(props) {
   const [introducemd, setIntroducemd] = useState()            //简介的markdown内容
   const [introducehtml, setIntroducehtml] = useState('等待编辑...') //简介的html内容
   const [showDate, setShowDate] = useState()   //发布日期
-  const [updateDate, setUpdateDate] = useState() //修改日志的日期
+  // const [updateDate, setUpdateDate] = useState() //修改日志的日期
   const [typeInfo, setTypeInfo] = useState([]) // 文章类别信息
-  const [selectedType, setSelectType] = useState('请选择类型') //选择的文章类别
+  const [selectedType, setSelectType] = useState(undefined) //选择的文章类别
 
   useEffect(() => {
     getTypeInfo()
@@ -31,7 +31,7 @@ function AddArticle(props) {
       setArticleId(tmpId)
       getArticleById(tmpId)
     }
-  }, [])
+  }, [props.match.params.id])
 
   const renderer = new marked.Renderer();
   marked.setOptions({
@@ -59,27 +59,15 @@ function AddArticle(props) {
 
   //从中台得到文章类别信息
   const getTypeInfo = () => {
-    // articleTypeList({}, {
-    //   header: { 'Access-Control-Allow-Origin': '*' },
-    //   withCredentials: true
-    // }).then(res => {
-    //   if (res.status === 0) {
-    //     setTypeInfo(res.data)
-    //   }
-    // }).catch(err => {
-    //   console.log('err', err)
-    // })
-    axios({
-      method: 'post',
-      url: 'http://127.0.0.1:7001/admin/getTypeList',
-      // header: { 'Access-Control-Allow-Origin': '*' },
+    articleTypeList({}, {
+      header: { 'Access-Control-Allow-Origin': '*' },
       withCredentials: true
     }).then(res => {
       if (res.status === 0) {
         setTypeInfo(res.data)
-      } else {
-        props.history.push('/')
       }
+    }).catch(err => {
+      console.log('err', err)
     })
   }
 
@@ -105,11 +93,6 @@ function AddArticle(props) {
     )
   }
 
-
-  const selectTypeHandler = (value) => {
-    setSelectType(value)
-  }
-
   //保存文章  (不退出页面是修改)
   const saveArticle = () => {
     // markedContent()  //先进行转换
@@ -131,58 +114,42 @@ function AddArticle(props) {
     }
 
     let dataProps = {}
-    console.log(selectedType)
+    const datetext = showDate.replace('-', '/')
+
     dataProps.type_id = selectedType
     dataProps.title = articleTitle
-    dataProps.article_content = articleContent
+    dataProps.content = articleContent
     dataProps.introduce = introducemd
-    let datetext = showDate.replace('-', '/')
-    dataProps.addTime = (new Date(datetext).getTime()) / 1000
-    // dataProps.part_count = partCount
-    // dataProps.article_content_html = markdownContent
-    // dataProps.introduce_html = introducehtml
+    dataProps.create_time = (new Date(datetext).getTime()) / 1000
 
-    if (articleId == 0) {
-      // console.log('articleId=:' + articleId)
-      dataProps.view_count = Math.ceil(Math.random() * 100) + 1000
-      axios({
-        method: 'post',
-        url: servicePath.addArticle,
-        header: { 'Access-Control-Allow-Origin': '*' },
-        data: dataProps,
-        withCredentials: true
-      }).then(
-        res => {
-          setArticleId(res.data.insertId)
-          if (res.data.isScuccess) {
-            message.success('文章发布成功')
-          } else {
-            message.error('文章发布失败');
-          }
-
+    if (articleId === 0) {// 添加文章
+      dataProps.count = Math.ceil(Math.random() * 100) + 1000
+      addArticle(dataProps, {
+        // header: { 'Access-Control-Allow-Origin': '*' },
+        // withCredentials: true
+      }).then(res => {
+        console.log('res', res)
+        setArticleId(res.data.insertId)
+        if (res.data.isScuccess) {
+          message.success('文章发布成功')
+        } else {
+          message.error('文章发布失败');
         }
-      )
-    } else {
-      // console.log('articleId:' + articleId)
+      })
+    } else {// 修改文章
       dataProps.id = articleId
-      axios({
-        method: 'post',
-        url: servicePath.updateArticle,
-        header: { 'Access-Control-Allow-Origin': '*' },
-        data: dataProps,
-        withCredentials: true
-      }).then(
-        res => {
-          if (res.data.isScuccess) {
-            message.success('文章保存成功')
-          } else {
-            message.error('保存失败');
-          }
+      updateArticle(dataProps, {
+        // header: { 'Access-Control-Allow-Origin': '*' },
+        // withCredentials: true
+      }).then(res => {
+        if (res.status === 0) {
+          message.success('修改成功')
+        } else {
+          message.error('修改失败');
         }
+      }
       )
     }
-
-
   }
 
   return (
@@ -197,7 +164,7 @@ function AddArticle(props) {
                 size="large" />
             </Col>
             <Col span={4}>
-              <Select defaultValue={selectedType} size="large" onChange={selectTypeHandler}>
+              <Select defaultValue={selectedType} size="large" placeholder="请选择分类" onChange={(value) => setSelectType(value)}>
                 {typeInfo?.map((item, index) => <Option key={item.id} value={item.id}>{item.name}</Option>)}
               </Select>
             </Col>
@@ -228,7 +195,7 @@ function AddArticle(props) {
         <Col span={6}>
           <Row>
             <Col span={24}>
-              <Button size="large">暂存文章</Button>
+              <Button size="large">暂存文章</Button>&nbsp;
               <Button type="primary" size="large" onClick={saveArticle}>发布文章</Button>
             </Col>
             <Col span={24}>
