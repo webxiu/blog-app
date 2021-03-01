@@ -3,11 +3,11 @@ import '../static/css/ArticleList.css'
 import { Button, Col, List, Modal, Row, message } from 'antd';
 import React, { useEffect, useState } from 'react';
 
+import { articleList } from '../api/admin'
 import axios from 'axios'
 import servicePath from '../config/apiUrl'
 
 const { confirm } = Modal;
-
 
 function ArticleList(props) {
   console.log('1111', 1111)
@@ -16,13 +16,8 @@ function ArticleList(props) {
 
   //得到文章列表
   const getList = () => {
-    axios({
-      method: 'get',
-      url: servicePath.getArticleList,
-      withCredentials: true,
-      header: { 'Access-Control-Allow-Origin': '*' }
-    }).then(res => {
-      setList(res.data.list)
+    articleList({}).then(res => {
+      setList(res.data)
     })
   }
 
@@ -45,7 +40,7 @@ function ArticleList(props) {
 
   //修改文章
   const updateArticle = (id, checked) => {
-    props.history.push('/index/add/' + id)
+    props.history.push('/admin/add/' + id)
   }
 
   return (
@@ -66,10 +61,10 @@ function ArticleList(props) {
           <List.Item>
             <Row className="list-div">
               <Col span={8}>{item.title}</Col>
-              <Col span={3}>{item.typeName}</Col>
-              <Col span={3}>{item.addTime}</Col>
+              <Col span={3}>{item.type}</Col>
+              <Col span={3}>{item.create_time}</Col>
               <Col span={3}>共<span>{item.part_count}</span>集</Col>
-              <Col span={3}>{item.view_count}</Col>
+              <Col span={3}>{item.count}</Col>
               <Col span={4}>
                 <Button type="primary" onClick={() => { updateArticle(item.id) }}>修改</Button>
                 <Button onClick={() => { delArticle(item.id) }} >删除 </Button>

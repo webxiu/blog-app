@@ -59,10 +59,7 @@ function AddArticle(props) {
 
   //从中台得到文章类别信息
   const getTypeInfo = () => {
-    articleTypeList({}, {
-      header: { 'Access-Control-Allow-Origin': '*' },
-      withCredentials: true
-    }).then(res => {
+    articleTypeList({}).then(res => {
       if (res.status === 0) {
         setTypeInfo(res.data)
       }
@@ -73,23 +70,19 @@ function AddArticle(props) {
 
   // //从中台得到文章信息
   const getArticleById = (id) => {
-    axios(servicePath.getArticleById + id, {
-      withCredentials: true,
-      header: { 'Access-Control-Allow-Origin': '*' }
-    }).then(
-      res => {
-        //let articleInfo= res.data.data[0]
-        setArticleTitle(res.data.data[0].title)
-        setArticleContent(res.data.data[0].article_content)
-        let html = marked(res.data.data[0].article_content)
-        setMarkdownContent(html)
-        setIntroducemd(res.data.data[0].introduce)
-        let tmpInt = marked(res.data.data[0].introduce)
-        setIntroducehtml(tmpInt)
-        setShowDate(res.data.data[0].addTime)
-        setSelectType(res.data.data[0].typeId)
+    axios(servicePath.getArticleById + id).then(res => {
+      //let articleInfo= res.data.data[0]
+      setArticleTitle(res.data.data[0].title)
+      setArticleContent(res.data.data[0].article_content)
+      let html = marked(res.data.data[0].article_content)
+      setMarkdownContent(html)
+      setIntroducemd(res.data.data[0].introduce)
+      let tmpInt = marked(res.data.data[0].introduce)
+      setIntroducehtml(tmpInt)
+      setShowDate(res.data.data[0].addTime)
+      setSelectType(res.data.data[0].typeId)
 
-      }
+    }
     )
   }
 
@@ -124,10 +117,7 @@ function AddArticle(props) {
 
     if (articleId === 0) {// 添加文章
       dataProps.count = Math.ceil(Math.random() * 100) + 1000
-      addArticle(dataProps, {
-        // header: { 'Access-Control-Allow-Origin': '*' },
-        // withCredentials: true
-      }).then(res => {
+      addArticle(dataProps).then(res => {
         console.log('res', res)
         setArticleId(res.data.insertId)
         if (res.data.isScuccess) {
@@ -138,10 +128,7 @@ function AddArticle(props) {
       })
     } else {// 修改文章
       dataProps.id = articleId
-      updateArticle(dataProps, {
-        // header: { 'Access-Control-Allow-Origin': '*' },
-        // withCredentials: true
-      }).then(res => {
+      updateArticle(dataProps).then(res => {
         if (res.status === 0) {
           message.success('修改成功')
         } else {

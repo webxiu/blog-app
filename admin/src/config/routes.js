@@ -19,7 +19,7 @@ const menuList = [
     icon: SettingFilled,
     children: [
       { title: "添加", key: "/admin/add", icon: FileOutlined },
-      { title: "更新", key: "/update", icon: PieChartOutlined },
+      // { title: "更新", key: "/update", icon: PieChartOutlined },
     ],
   },
   { title: "留言管理", key: "/admin/message", icon: SettingFilled },

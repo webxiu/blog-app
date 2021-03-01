@@ -22,6 +22,7 @@ const App = () => {
                 <Route path="/admin" exact component={Home} />
                 <Route path="/admin/list" exact component={ArticleList} />
                 <Route path="/admin/add" exact component={AddArticle} />
+                <Route path="/admin/add/:id" exact component={AddArticle} />
                 <Route component={<div>没找到页面...</div>} />
               </Switch>
             )}
