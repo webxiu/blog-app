@@ -82,6 +82,46 @@ class AdminController extends Controller {
             msg: affectedRows === 1 ? '修改成功' : '修改失败',
         };
     }
+    /** 通过 id 获取文章 */
+    async getArticleById() {
+        const { ctx, app } = this;
+        const id = ctx.params.id
+        console.log('id', id)
+        if (!id) {
+            ctx.body = {
+                data: null,
+                status: 400,
+                msg: 'error',
+            };
+            return
+        }
+        const sql = `select article.id as id, 
+                            article.title as title, 
+                            article.introduce as introduce,
+                            FROM_UNIXTIME(article.create_time, '%Y-%m-%d %H:%i:%s') as create_time,
+                            article.content as content,
+                            article.count as count,
+                            type.id as type_id 
+                    from article left join type on article.type_id = type.id where type_id = ${id}`
+        const data = await app.mysql.query(sql)
+        ctx.body = {
+            data,
+            status: 0,
+            msg: 'ok',
+        };
+    }
+    /** 删除文章 */
+    async deleteArticle() {
+        const { ctx, app } = this;
+        const { id } = ctx.request.body
+        const { affectedRows } = await app.mysql.delete('article', { 'id': id })
+        ctx.body = {
+            data: null,
+            status: 0,
+            msg: affectedRows === 1 ? '删除成功' : '删除失败',
+        };
+    }
+
 }
 
 module.exports = AdminController;

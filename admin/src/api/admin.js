@@ -28,13 +28,32 @@ export function addArticle(data) {
     method: 'post',
     data,
     withCredentials: true,
-    header: { 'Access-Control-Allow-Origin': '*' }
+    header: { 'Access-Control-Allow-Origin': '*' }//可以不要
   })
 }
 // 修改文章
 export function updateArticle(data) {
   return http({
     url: '/admin/updateArticle',
+    method: 'post',
+    data,
+    withCredentials: true,
+    header: { 'Access-Control-Allow-Origin': '*' }
+  })
+}
+// 根据 id 获取文章
+export function getArticleById(data) {
+  return http({
+    url: '/admin/getArticleById/' + data,
+    method: 'get',
+    withCredentials: true,
+    header: { 'Access-Control-Allow-Origin': '*' }
+  })
+}
+// 删除文章
+export function deleteArticle(data) {
+  return http({
+    url: '/admin/deleteArticle',
     method: 'post',
     data,
     withCredentials: true,

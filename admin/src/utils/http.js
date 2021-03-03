@@ -7,7 +7,7 @@ import { message } from 'antd'
 
 const service = axios.create({
   // baseURL: process.env.VUE_APP_BASE_API,
-  baseURL: 'http://127.0.0.1:7001',
+  baseURL: 'http://127.0.0.1:7002',
   timeout: 5000
 })
 

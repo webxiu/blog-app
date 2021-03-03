@@ -2,10 +2,7 @@ import '../static/css/ArticleList.css'
 
 import { Button, Col, List, Modal, Row, message } from 'antd';
 import React, { useEffect, useState } from 'react';
-
-import { articleList } from '../api/admin'
-import axios from 'axios'
-import servicePath from '../config/apiUrl'
+import { articleList, deleteArticle } from '../api/admin'
 
 const { confirm } = Modal;
 
@@ -27,13 +24,13 @@ function ArticleList(props) {
       title: '确定要删除这篇博客文章吗?',
       content: '如果你点击OK按钮，文章将会永远被删除，无法恢复。',
       onOk() {
-        axios(servicePath.delArticle + id, { withCredentials: true }).then(res => {
+        deleteArticle({ id }).then(res => {
           message.success('文章删除成功')
           getList()
         })
       },
       onCancel() {
-        message.success('没有任何改变')
+        message.success('取消操作')
       },
     });
   }

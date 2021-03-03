@@ -2,11 +2,9 @@ import '../static/css/AddArticle.css'
 
 import { Button, Col, DatePicker, Input, Row, Select, message } from 'antd'
 import React, { useEffect, useState } from 'react'
-import { addArticle, articleTypeList, updateArticle } from '../api/admin'
+import { addArticle, articleTypeList, getArticleById, updateArticle } from '../api/admin'
 
-import axios from 'axios'
 import marked from 'marked'
-import servicePath from '../config/apiUrl'
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -29,7 +27,7 @@ function AddArticle(props) {
     let tmpId = props.match.params.id
     if (tmpId) {
       setArticleId(tmpId)
-      getArticleById(tmpId)
+      getUpdateArticleById(tmpId)
     }
   }, [props.match.params.id])
 
@@ -69,21 +67,19 @@ function AddArticle(props) {
   }
 
   // //从中台得到文章信息
-  const getArticleById = (id) => {
-    axios(servicePath.getArticleById + id).then(res => {
-      //let articleInfo= res.data.data[0]
-      setArticleTitle(res.data.data[0].title)
-      setArticleContent(res.data.data[0].article_content)
-      let html = marked(res.data.data[0].article_content)
-      setMarkdownContent(html)
-      setIntroducemd(res.data.data[0].introduce)
-      let tmpInt = marked(res.data.data[0].introduce)
-      setIntroducehtml(tmpInt)
-      setShowDate(res.data.data[0].addTime)
-      setSelectType(res.data.data[0].typeId)
-
-    }
-    )
+  const getUpdateArticleById = (id) => {
+    getArticleById(id).then(res => {
+      const data = res.data[0]
+      if (res.status === 0 && res.data?.length) {
+        setArticleTitle(data.title)
+        setArticleContent(data.content)
+        setMarkdownContent(marked(data.content))
+        setIntroducemd(data.introduce)
+        setIntroducehtml(marked(data.introduce))
+        setShowDate(data.create_time)
+        setSelectType(data.type_id)
+      }
+    })
   }
 
   //保存文章  (不退出页面是修改)
