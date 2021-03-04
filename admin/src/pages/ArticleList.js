@@ -1,20 +1,37 @@
 import '../static/css/ArticleList.css'
 
-import { Button, Col, List, Modal, Row, message } from 'antd';
+import { Button, Col, List, Modal, Row, Table, message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { articleList, deleteArticle } from '../api/admin'
 
 const { confirm } = Modal;
 
+
 function ArticleList(props) {
   console.log('1111', 1111)
-  const [list, setList] = useState([])
+  // const [list, setList] = useState([])
+  const [dataSource, setDataSource] = useState([])
+  const columns = [
+    { title: '标题', dataIndex: 'title', key: 'title' },
+    { title: '类别', dataIndex: 'type', key: 'title' },
+    { title: '浏览量(人)', dataIndex: 'count', key: 'count' },
+    { title: '发布时间', dataIndex: 'create_time', key: 'create_time' },
+    {
+      title: '操作', dataIndex: 'opt', key: 'opt', align: 'center', render: (text, record) => {
+        return <div>
+          <Button size="small" type="primary" onClick={() => { updateArticle(record.id) }}>修改</Button>
+          <Button size="small" style={{ marginLeft: 8 }} onClick={() => { delArticle(record.id) }} >删除 </Button>
+        </div>
+      }
+    },
+  ]
+
   useEffect(() => { getList() }, [])
 
   //得到文章列表
   const getList = () => {
     articleList({}).then(res => {
-      setList(res.data)
+      setDataSource(res.data)
     })
   }
 
@@ -25,13 +42,10 @@ function ArticleList(props) {
       content: '如果你点击OK按钮，文章将会永远被删除，无法恢复。',
       onOk() {
         deleteArticle({ id }).then(res => {
-          message.success('文章删除成功')
+          message.success('删除成功')
           getList()
         })
-      },
-      onCancel() {
-        message.success('取消操作')
-      },
+      }
     });
   }
 
@@ -42,34 +56,9 @@ function ArticleList(props) {
 
   return (
     <div>
-      <List
-        header={
-          <Row className="list-div">
-            <Col span={8}> <b>标题</b></Col>
-            <Col span={4}><b>类别</b></Col>
-            <Col span={4}><b>发布时间</b></Col>
-            <Col span={4}><b>浏览量</b></Col>
-            <Col span={4}><b>操作</b></Col>
-          </Row>
-        }
-        bordered
-        dataSource={list}
-        renderItem={item => (
-          <List.Item>
-            <Row className="list-div">
-              <Col span={8}>{item.title}</Col>
-              <Col span={3}>{item.type}</Col>
-              <Col span={3}>{item.create_time}</Col>
-              <Col span={3}>共<span>{item.part_count}</span>集</Col>
-              <Col span={3}>{item.count}</Col>
-              <Col span={4}>
-                <Button type="primary" onClick={() => { updateArticle(item.id) }}>修改</Button>
-                <Button onClick={() => { delArticle(item.id) }} >删除 </Button>
-              </Col>
-            </Row>
-          </List.Item>
-        )}
-      />
+      <Table columns={columns} dataSource={dataSource}>
+      </Table>
+
     </div>
   )
 }
