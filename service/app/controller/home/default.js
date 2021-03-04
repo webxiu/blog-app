@@ -7,13 +7,12 @@ class HomeController extends Controller {
     async getArticleList() {
         const { ctx, app } = this;
         const sql = `select article.id as id, 
-                            article.title as title, 
-                            article.introduce as introduce,
-                            FROM_UNIXTIME(article.create_time, '%Y-%m-%d %H:%i:%s') as create_time,
-                            article.content as content,
-                            article.count as count,
-                            type.name as name, 
-                            type.sort as sort 
+                    article.title as title, 
+                    article.introduce as introduce,
+                    FROM_UNIXTIME(article.create_time, '%Y-%m-%d %H:%i:%s') as create_time,
+                    article.count as count,
+                    type.type as type, 
+                    type.sort as sort 
                     from article left join type on article.type_id = type.id`
         const data = await app.mysql.query(sql)
         ctx.body = {
@@ -29,19 +28,27 @@ class HomeController extends Controller {
         const sql = `select article.id as id, 
                             article.title as title, 
                             article.introduce as introduce,
-                            article.content as content,
+                            article.count as count,
                             FROM_UNIXTIME(article.create_time, '%Y-%m-%d %H:%i:%s') as create_time,
                             article.content as content,
-                            type.name as name, 
+                            type.type as type, 
                             type.id as type_id, 
                             type.sort as sort 
                     from article left join type on article.type_id = type.id where article.id = ${id}`
         const data = await app.mysql.query(sql)
-        ctx.body = {
-            data,
-            status: 0,
-            msg: 'ok'
-        };
+        if (data[0]) {
+            ctx.body = {
+                data: data[0],
+                status: 0,
+                msg: 'ok'
+            };
+        } else {
+            ctx.body = {
+                data: null,
+                status: 0,
+                msg: 'ok'
+            };
+        }
     }
     /** 获取分类类型 */
     async getTypeList() {
@@ -62,9 +69,8 @@ class HomeController extends Controller {
                             article.title as title, 
                             article.introduce as introduce,
                             FROM_UNIXTIME(article.create_time, '%Y-%m-%d %H:%i:%s') as create_time,
-                            article.content as content,
                             article.count as count,
-                            type.name as name, 
+                            type.type as type, 
                             type.sort as sort 
                     from article left join type on article.type_id = type.id where type_id = ${id}`
         const data = await app.mysql.query(sql)

@@ -69,8 +69,8 @@ function AddArticle(props) {
   // //从中台得到文章信息
   const getUpdateArticleById = (id) => {
     getArticleById(id).then(res => {
-      const data = res.data[0]
-      if (res.status === 0 && res.data?.length) {
+      const data = res.data
+      if (res.status === 0) {
         setArticleTitle(data.title)
         setArticleContent(data.content)
         setMarkdownContent(marked(data.content))
@@ -148,7 +148,7 @@ function AddArticle(props) {
             </Col>
             <Col span={4}>
               <Select defaultValue={selectedType} size="large" placeholder="请选择分类" onChange={(value) => setSelectType(value)}>
-                {typeInfo?.map((item, index) => <Option key={item.id} value={item.id}>{item.name}</Option>)}
+                {typeInfo?.map((item, index) => <Option key={item.id} value={item.id}>{item.type}</Option>)}
               </Select>
             </Col>
           </Row>

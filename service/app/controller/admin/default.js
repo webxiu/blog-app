@@ -42,10 +42,11 @@ class AdminController extends Controller {
         const { ctx, app } = this;
         const sql = `SELECT article.id as id, 
                     article.title as title, 
+                    article.type_id as type_id,
                     article.introduce as introduce,
                     FROM_UNIXTIME(article.create_time, '%Y-%m-%d %H:%i:%s') as create_time,
                     article.count as count,
-                    type.name as type
+                    type.type as type
                     FROM article LEFT JOIN type on article.type_id = type.id 
                     ORDER BY article.id DESC`
         const data = await app.mysql.query(sql)
@@ -86,7 +87,6 @@ class AdminController extends Controller {
     async getArticleById() {
         const { ctx, app } = this;
         const id = ctx.params.id
-        console.log('id', id)
         if (!id) {
             ctx.body = {
                 data: null,
@@ -102,13 +102,21 @@ class AdminController extends Controller {
                             article.content as content,
                             article.count as count,
                             type.id as type_id 
-                    from article left join type on article.type_id = type.id where type_id = ${id}`
+                    from article left join type on article.type_id = type.id where article.id = ${id}`
         const data = await app.mysql.query(sql)
-        ctx.body = {
-            data,
-            status: 0,
-            msg: 'ok',
-        };
+        if (data[0]) {
+            ctx.body = {
+                data: data[0],
+                status: 0,
+                msg: 'ok'
+            };
+        } else {
+            ctx.body = {
+                data: null,
+                status: 0,
+                msg: 'ok'
+            };
+        }
     }
     /** 删除文章 */
     async deleteArticle() {
