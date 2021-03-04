@@ -1,14 +1,16 @@
-import React, { useEffect, useState } from 'react'
 import '../styles/components/header.css'
-import { Row, Col, Menu } from 'antd'
-import {
-    HomeOutlined, YoutubeOutlined,
-    SmileOutlined
-} from '@ant-design/icons'
-import { articleTypeList } from '../pages/api/index'
-import Router from 'next/router'
-import Link from 'next/link'
 
+import { Col, Menu, Row } from 'antd'
+import {
+    HomeOutlined,
+    SmileOutlined,
+    YoutubeOutlined
+} from '@ant-design/icons'
+import React, { useEffect, useState } from 'react'
+
+import Link from 'next/link'
+import Router from 'next/router'
+import { articleTypeList } from '../pages/api/index'
 
 export const Header = () => {
     const [typeList, setTypeList] = useState([]);
@@ -44,12 +46,12 @@ export const Header = () => {
                     </span>
                     <span className="header-text">老家回老家了回家路上</span>
                 </Col>
-                <Col xs={0} sm={0} md={14} lg={8} xl={6}>
+                <Col xs={0} sm={0} md={14} lg={10} xl={8}>
                     <Menu mode="horizontal" onClick={handleClick}>
                         {typeList.map(item => {
                             return <Menu.Item key={item.id}>
                                 {item.icon === '1' ? <HomeOutlined /> : item.icon === '2' ? <YoutubeOutlined /> : <SmileOutlined />}
-                                {item.name}
+                                {item.type}
                             </Menu.Item>
                         })}
                     </Menu>

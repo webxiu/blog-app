@@ -11,6 +11,7 @@ export function articleList(data) {
 
 // 文章详情
 export function articleDetail(data) {
+  console.log('data', data)
   return http({
     url: '/home/getArticleById/' + data,
     method: 'get',
@@ -27,7 +28,6 @@ export function articleTypeList(data) {
 }
 // 根据类别id获取文章列表
 export function getListById(data) {
-  console.log('data', data)
   return http({
     url: '/home/getListById/' + data,
     method: 'get'

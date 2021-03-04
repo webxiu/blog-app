@@ -1,20 +1,21 @@
-import React, { useState, useEffect } from 'react'
-import Head from 'next/head'
-import { Row, Col, List, Icon, Breadcrumb } from 'antd'
-import Header from '../components/Header'
-import Author from '../components/Author'
-import Advert from '../components/Advert'
-import Footer from '../components/Footer'
 import '../styles/pages/list.css'
-import { getListById } from '../pages/api/index'
-import Link from 'next/link'
-import { withRouter } from 'next/router'
 
+import { Breadcrumb, Col, Icon, List, Row } from 'antd'
 import {
   CalendarOutlined,
-  FolderOutlined,
   FireOutlined,
+  FolderOutlined,
 } from "@ant-design/icons";
+import React, { useEffect, useState } from 'react'
+
+import Advert from '../components/Advert'
+import Author from '../components/Author'
+import Footer from '../components/Footer'
+import Head from 'next/head'
+import Header from '../components/Header'
+import Link from 'next/link'
+import { getListById } from '../pages/api/index'
+import { withRouter } from 'next/router'
 
 const MyList = ({ router }) => {
   const [mylist, setMylist] = useState([]);
@@ -61,10 +62,10 @@ const MyList = ({ router }) => {
                   </div>
                   <div className="list-icon">
                     <span><CalendarOutlined />{item.create_time}</span>
-                    <span><FolderOutlined /> {item.name}</span>
+                    <span><FolderOutlined /> {item.type}</span>
                     <span><FireOutlined />  {item.count}人</span>
                   </div>
-                  <div className="list-context">{item.content}</div>
+                  <div className="list-context">{item.introduce}</div>
                 </List.Item>
               )}
             />

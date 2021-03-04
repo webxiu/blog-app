@@ -1,34 +1,32 @@
-import React, { useState, useEffect } from 'react'
-import Head from 'next/head'
-import { Row, Col, Affix, Breadcrumb } from 'antd'
-import Header from '../components/Header'
-import Author from '../components/Author'
-import Advert from '../components/Advert'
-import Footer from '../components/Footer'
 // import ReactMarkdown from 'react-markdown'
 // import MarkNav from 'markdown-navbar';
 import 'markdown-navbar/dist/navbar.css';
-import { articleDetail } from './api/index'
-import { withRouter } from 'next/router'
-
-
-import marked from 'marked'
-import hljs from "highlight.js";
-import Tocify from '../components/tocify.tsx'
 import 'highlight.js/styles/monokai-sublime.css';
 import '../styles/pages/detailed.css'
+
+import { Affix, Breadcrumb, Col, Row } from 'antd'
 import {
   CalendarOutlined,
-  FolderOutlined,
-  FireOutlined
+  FireOutlined,
+  FolderOutlined
 } from '@ant-design/icons'
+import React, { useEffect, useState } from 'react'
 
-
-
+import Advert from '../components/Advert'
+import Author from '../components/Author'
+import Footer from '../components/Footer'
+import Head from 'next/head'
+import Header from '../components/Header'
+import Tocify from '../components/tocify.tsx'
+import { articleDetail } from './api/index'
+import hljs from "highlight.js";
+import marked from 'marked'
+import { withRouter } from 'next/router'
 
 const Detailed = ({ router }) => {
   const tocify = new Tocify()
   const renderer = new marked.Renderer();
+  const [htmlText, setHtmlText] = useState('')
 
   renderer.heading = function (text, level, raw) {
     const anchor = tocify.add(text, level);
@@ -49,7 +47,7 @@ const Detailed = ({ router }) => {
     }
   });
 
-  let htmlText = '# p01:来个Hello World 初始Vue3.0\n' +
+  let htmlText2 = '# p01:来个Hello World 初始Vue3.0\n' +
     '[ **M** ] arkdown + E [ **ditor** ] = **Mditor**  \n' +
     '> Mditor 是一个简洁、易于集成、方便扩展、期望舒服的编写 markdown 的编辑器，仅此而已... \n\n' +
     '**这是加粗的文字**\n\n' +
@@ -83,7 +81,7 @@ const Detailed = ({ router }) => {
     '>> bbbbbbbbb\n' +
     '>>> cccccccccc\n\n' +
     '``` var a=11; ```'
-  let html = marked(htmlText)
+  console.log('htmlText', htmlText.content)
 
 
   useEffect(() => {
@@ -95,8 +93,10 @@ const Detailed = ({ router }) => {
 
   const getArticleDetail = (id) => {
     articleDetail(id).then((res) => {
-      // setDetail(res.data.data);
-      console.log('详情数据', res.data)
+      if (res.status === 0) {
+        setHtmlText(res.data);
+        // console.log('详情数据', res.data)
+      }
     }).catch(err => {
       console.log('err', err)
     })
@@ -119,13 +119,13 @@ const Detailed = ({ router }) => {
             </div>
 
             <div>
-              <div className="detailed-title">文章详情页面文章标题</div>
+              <div className="detailed-title">{htmlText.title}</div>
               <div className="list-icon center">
-                <span><CalendarOutlined />2019-06-28</span>
-                <span><FolderOutlined /> 视频教程</span>
-                <span><FireOutlined /> 5498人</span>
+                <span><CalendarOutlined />{htmlText.create_time}</span>
+                <span><FolderOutlined /> {htmlText.type}</span>
+                <span><FireOutlined /> {htmlText.count}人</span>
               </div>
-              <div className="detailed-content" dangerouslySetInnerHTML={{ __html: html }}></div>
+              <div className="detailed-content" dangerouslySetInnerHTML={{ __html: marked(htmlText.content || '') }}></div>
               {/* <div className="detailed-content" >
                 <ReactMarkdown
                   source={htmlText}

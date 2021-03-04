@@ -1,24 +1,23 @@
-import Head from "next/head";
-import React, { useState, useEffect } from "react";
+import { Breadcrumb, Col, List, Row } from "antd";
+import {
+  CalendarOutlined,
+  FireOutlined,
+  FolderOutlined,
+} from "@ant-design/icons";
+import React, { useEffect, useState } from "react";
 
-import Header from "../components/Header";
-import Author from "../components/Author";
 import Advert from "../components/Advert";
+import Author from "../components/Author";
 import Footer from "../components/Footer";
-
-
-import { Row, Col, List, Breadcrumb } from "antd";
+import Head from "next/head";
+import Header from "../components/Header";
 import Link from "next/link";
-import { articleList } from './api/index'
 import ReactMarkdown from 'react-markdown'
+import { articleList } from './api/index'
+
 // import marked from "marked";
 // import MarkNav from 'markdown-navbar'; //提供目录
 
-import {
-  CalendarOutlined,
-  FolderOutlined,
-  FireOutlined,
-} from "@ant-design/icons";
 
 export default function Home() {
   const [mylist, setMylist] = useState([]);
@@ -74,7 +73,7 @@ export default function Home() {
                         <CalendarOutlined /> {item.create_time}
                       </span>
                       <span>
-                        <FolderOutlined /> {item.type_name}
+                        <FolderOutlined /> {item.type}
                       </span>
                       <span>
                         <FireOutlined /> {item.count}人
@@ -89,7 +88,7 @@ export default function Home() {
                     ></div> */}
                     <div className="detailed-content" >
                       <ReactMarkdown
-                        source={item.content}
+                        source={item.introduce}
                         escapeHtml={false}
                       />
                     </div>
