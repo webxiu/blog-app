@@ -31,13 +31,10 @@ function Login(props) {
         }
         login({ username, password })
             .then(res => {
-                if (res.status === 0) {
-                    localStorage.setItem('openId', res.data.openId)
-                    props.history.push('/')
-                } else {
-                    message.error('用户名密码错误')
-                }
+                localStorage.setItem('openId', res.data.openId)
+                props.history.push('/')
             }).catch(err => {
+                message.error('用户名密码错误')
                 console.log('err', err)
             })
             .finally(() => {

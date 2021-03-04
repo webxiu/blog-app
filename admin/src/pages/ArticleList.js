@@ -6,10 +6,7 @@ import { articleList, deleteArticle } from '../api/admin'
 
 const { confirm } = Modal;
 
-
 function ArticleList(props) {
-  console.log('1111', 1111)
-  // const [list, setList] = useState([])
   const [dataSource, setDataSource] = useState([])
   const columns = [
     { title: '标题', dataIndex: 'title', key: 'title' },

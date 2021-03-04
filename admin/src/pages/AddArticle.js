@@ -58,9 +58,7 @@ function AddArticle(props) {
   //从中台得到文章类别信息
   const getTypeInfo = () => {
     articleTypeList({}).then(res => {
-      if (res.status === 0) {
-        setTypeInfo(res.data)
-      }
+      setTypeInfo(res.data)
     }).catch(err => {
       console.log('err', err)
     })
@@ -70,15 +68,13 @@ function AddArticle(props) {
   const getUpdateArticleById = (id) => {
     getArticleById(id).then(res => {
       const data = res.data
-      if (res.status === 0) {
-        setArticleTitle(data.title)
-        setArticleContent(data.content)
-        setMarkdownContent(marked(data.content))
-        setIntroducemd(data.introduce)
-        setIntroducehtml(marked(data.introduce))
-        setShowDate(data.create_time)
-        setSelectType(data.type_id)
-      }
+      setArticleTitle(data.title)
+      setArticleContent(data.content)
+      setMarkdownContent(marked(data.content))
+      setIntroducemd(data.introduce)
+      setIntroducehtml(marked(data.introduce))
+      setShowDate(data.create_time)
+      setSelectType(data.type_id)
     })
   }
 
@@ -114,7 +110,6 @@ function AddArticle(props) {
     if (articleId === 0) {// 添加文章
       dataProps.count = Math.ceil(Math.random() * 100) + 1000
       addArticle(dataProps).then(res => {
-        console.log('res', res)
         setArticleId(res.data.insertId)
         if (res.data.isScuccess) {
           message.success('文章发布成功')
@@ -125,13 +120,10 @@ function AddArticle(props) {
     } else {// 修改文章
       dataProps.id = articleId
       updateArticle(dataProps).then(res => {
-        if (res.status === 0) {
-          message.success('修改成功')
-        } else {
-          message.error('修改失败');
-        }
-      }
-      )
+        message.success('修改成功')
+      }).catch(() => {
+        message.error('修改失败');
+      })
     }
   }
 
@@ -147,7 +139,7 @@ function AddArticle(props) {
                 size="large" />
             </Col>
             <Col span={4}>
-              <Select defaultValue={selectedType} size="large" placeholder="请选择分类" onChange={(value) => setSelectType(value)}>
+              <Select value={selectedType} size="large" placeholder="请选择分类" onChange={(value) => setSelectType(value)}>
                 {typeInfo?.map((item, index) => <Option key={item.id} value={item.id}>{item.type}</Option>)}
               </Select>
             </Col>
@@ -164,7 +156,6 @@ function AddArticle(props) {
                 placeholder="文章内容"
               />
             </Col>
-
             <Col span={12}>
               <div
                 className="show-html"
